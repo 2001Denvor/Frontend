@@ -43,6 +43,7 @@ const menuItems = [
   { label: 'Security', icon: <SecurityIcon />, path: '/security', roles: ['admin'] },
   { label: 'Help / Support', icon: <HelpOutlineIcon />, path: '/help', roles: ['admin', 'user'] },
   { label: 'Feedback', icon: <FeedbackOutlinedIcon />, path: '/feedback', roles: ['admin', 'user'] },
+];
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
