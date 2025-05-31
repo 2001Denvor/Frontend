@@ -1,4 +1,12 @@
 import React, { useState } from 'react';
+import AssignmentIcon from '@mui/icons-material/Assignment';
+import FolderIcon from '@mui/icons-material/Folder';
+import SchoolIcon from '@mui/icons-material/School';
+import StarRateIcon from '@mui/icons-material/StarRate';
+import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import SecurityIcon from '@mui/icons-material/Security';
 import { Drawer, List, ListItemIcon, ListItemText, ListItemButton, IconButton, Tooltip } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
