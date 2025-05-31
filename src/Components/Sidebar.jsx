@@ -30,12 +30,19 @@ const menuItems = [
   { label: 'Statistics', icon: <BarChartIcon />, path: '/stats', roles: ['admin'] },
   { label: 'Documentation', icon: <DescriptionOutlinedIcon />, path: '/docs', roles: ['admin', 'user'] },
   { label: 'Data', icon: <StorageIcon />, path: '/data', roles: ['admin'] },
+  { label: 'Tasks', icon: <AssignmentIcon />, path: '/tasks', roles: ['user'] },
+  { label: 'Projects', icon: <FolderIcon />, path: '/projects', roles: ['admin', 'user'] },
+  { label: 'Jobs', icon: <WorkOutlineIcon />, path: '/jobs', roles: ['admin', 'user'] },
+  { label: 'Top Performers', icon: <StarRateIcon />, path: '/admin/top-performers', roles: ['admin'] },
+  { label: 'Courses', icon: <SchoolIcon />, path: '/courses', roles: ['user'] },
   { label: 'Chart', icon: <ShowChartIcon />, path: '/charts', roles: ['admin'] },
   { label: 'Calendar', icon: <CalendarTodayIcon />, path: '/calendar', roles: ['user'] },
   { label: 'Chat', icon: <ChatIcon />, path: '/chat', roles: ['user'] },
+  { label: 'Favorites', icon: <StarBorderIcon />, path: '/favorites', roles: ['user'] },
+  { label: 'Recent Activity', icon: <AccessTimeIcon />, path: '/recent', roles: ['user'] },
+  { label: 'Security', icon: <SecurityIcon />, path: '/security', roles: ['admin'] },
   { label: 'Help / Support', icon: <HelpOutlineIcon />, path: '/help', roles: ['admin', 'user'] },
   { label: 'Feedback', icon: <FeedbackOutlinedIcon />, path: '/feedback', roles: ['admin', 'user'] },
-];
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
