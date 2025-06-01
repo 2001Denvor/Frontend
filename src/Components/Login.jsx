@@ -85,7 +85,7 @@ export default function Login() {
             type="submit" // add this
             fullWidth
             variant="contained"
-            sx={{ mt: 2, mb: 2, background: 'linear-gradient(to right,rgb(4, 21, 38),rgb(4, 16, 39))', color: 'white' }}
+            sx={{ mt: 2, mb: 2, background: 'linear-gradient(to right,rgb(8, 8, 8),rgb(1, 6, 16))', color: 'white' }}
           >
             Sign In
           </Button>
