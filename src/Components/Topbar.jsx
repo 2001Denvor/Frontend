@@ -72,9 +72,6 @@ const Topbar = ({ toggleTheme, isDarkMode }) => {
             </IconButton>
           </Tooltip>
 
-          
-
-
           {/* Language Selector */}
           <FormControl size="small" variant="standard">
             <Select
