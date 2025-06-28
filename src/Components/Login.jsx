@@ -22,19 +22,31 @@ export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
-  const handleSignIn = (e) => {
-    e.preventDefault();
+  const handleSignIn = async (e) => {
+  e.preventDefault();
+  try {
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    const user = login(email, password);
-      if (user.role === 'admin') {
-        navigate('/admin');
-      } else {
-        navigate('/dashboard');
-      }
+    const user = await login(email, password);
+    if (!user) {
+      alert("Login failed");
+      return;
+    }
 
-  };
+    if (user.role === 'admin') {
+      navigate('/admin/dashboard');
+    } else if(user.role == 'user') {
+      navigate('/user/dashboard');
+    }else{
+      alert("Invalid role");
+    }
+  } catch (err) {
+    console.error("Login error:", err);
+    alert("Something went wrong. Please try again.");
+  }
+};
+
   return (
     <Container maxWidth="xs">
       <Box
@@ -125,5 +137,3 @@ export default function Login() {
     </Container>
   );
 }
-
-

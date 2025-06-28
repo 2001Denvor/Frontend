@@ -72,22 +72,7 @@ const Topbar = ({ toggleTheme, isDarkMode }) => {
             </IconButton>
           </Tooltip>
 
-          <Tooltip title="Switch Role">
-            <FormControl>
-              <Box display="flex" alignItems="center" gap={1}>
-                <Typography variant="body2">User</Typography>
-                  <Switch
-                    checked={user?.role === 'admin'}
-                    onChange={(e) => {
-                      const newRole = e.target.checked ? 'admin' : 'user';
-                      login(newRole === 'admin' ? 'admin@example.com' : 'user@example.com', 'password'); // use dummy password
-                    }}
-                    inputProps={{ 'aria-label': 'role switch' }}
-                  />
-                <Typography variant="body2">Admin</Typography>
-              </Box>
-            </FormControl>
-          </Tooltip>
+          
 
 
           {/* Language Selector */}

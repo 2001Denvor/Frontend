@@ -1,17 +1,21 @@
-
-import { useAuth } from './AuthContext';
+import { useAuth } from './AuthContext'; // adjust path as needed
 import { Navigate } from 'react-router-dom';
 
-export function ProtectedRoute({ children, role }) {
+const ProtectedRoute = ({ children, requiredRole }) => {
   const { user } = useAuth();
 
+  // Redirect to login if not authenticated
   if (!user) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
-  if (role && user.role !== role) {
-    return <Navigate to="/unauthorized" />;
+  // Redirect to user dashboard if role doesn't match
+  if (requiredRole && user.role !== requiredRole) {
+    return <Navigate to="/user/dashboard" />;
   }
 
+  // Otherwise, render the children
   return children;
-}
+};
+
+export default ProtectedRoute;

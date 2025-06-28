@@ -3,16 +3,18 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Box } from '@mui/material';
 import './App.css';
+import AdminDashboard from './Pages/AdminDashboard';
+
 
 // Component imports
 import Login from './Components/Login';
 import SignUp from './Components/SignUp';
-import Dashboard from './Pages/Dashboard';
+import UserDashboard from './Pages/UserDashboard';
 import Sidebar from './Components/Sidebar';
 import Topbar from './Components/Topbar';
 import StatCard from './Components/StatCard';
 import ChartCard from './Components/ChartCard';
-import { ProtectedRoute } from './Components/ProtectedRoute'; 
+import  ProtectedRoute from './Components/ProtectedRoute'; 
 // OR if ProtectedRoute uses `export default`, then: import ProtectedRoute from './Components/ProtectedRoute';
 
 function App() {
@@ -22,18 +24,36 @@ function App() {
       <Route path="/" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
 
-      {/* Protected Dashboard Route */}
       <Route
-        path="/dashboard"
+        path="/admin/dashboard"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredRole="admin">
             <Box display="flex">
               <Sidebar />
               <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <Topbar />
                 <StatCard />
                 <ChartCard />
-                <Dashboard />
+                <AdminDashboard />
+              </Box>
+            </Box>
+          </ProtectedRoute>
+        }
+      />
+
+
+      {/* Protected Dashboard Route */}
+      <Route
+        path="/user/dashboard"
+        element={
+          <ProtectedRoute requiredRole="user">
+            <Box display="flex">
+              <Sidebar />
+              <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                <Topbar />
+                <StatCard />
+                <ChartCard />
+                <UserDashboard />
               </Box>
             </Box>
           </ProtectedRoute>

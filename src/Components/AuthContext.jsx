@@ -1,29 +1,31 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
-const AuthContext = createContext({});
+const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem('user'));
-    if (storedUser) {
-      setUser(storedUser);
-    }
-  }, []);
+  const login = async (email, password) => {
+    const res = await fetch("http://localhost:5238/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
 
-  const login = (email, password) => {
-    const loggedInUser = {
-      email,
-      role: email === 'admin@example.com' ? 'admin' : 'user',
-    };
-    localStorage.setItem('user', JSON.stringify(loggedInUser));
-    setUser(loggedInUser);
-    return loggedInUser;
-  };
+    console.log("Login status:", res.status);
+
+    try {
+    const data = await res.json();
+    console.log("Login response data:", data); // 👈 Add this
+    setUser(data);
+    return data;
+  } catch (err) {
+    console.error("Error parsing JSON:", err); // 👈 Will show if 204
+    return null;
+  }
+};
 
   const logout = () => {
-    localStorage.removeItem('user');
     setUser(null);
   };
 
