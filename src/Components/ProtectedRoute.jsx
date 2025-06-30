@@ -1,20 +1,27 @@
-import { useAuth } from './AuthContext'; // adjust path as needed
+import React from 'react';
+import { useAuth } from './AuthContext'; // Adjust path as needed
 import { Navigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children, requiredRole }) => {
   const { user } = useAuth();
 
-  // Redirect to login if not authenticated
+  // Not logged in
   if (!user) {
-    return <Navigate to="/" />;
+    return <Navigate to="/" replace />;
   }
 
-  // Redirect to user dashboard if role doesn't match
+  // Role mismatch
   if (requiredRole && user.role !== requiredRole) {
-    return <Navigate to="/user/dashboard" />;
+    if (user.role === 'admin') {
+      return <Navigate to="/admin/dashboard" replace />;
+    } else if (user.role === 'user') {
+      return <Navigate to="/user/dashboard" replace />;
+    } else {
+      return <Navigate to="/" replace />;
+    }
   }
 
-  // Otherwise, render the children
+  // Authorized, render children
   return children;
 };
 

@@ -10,7 +10,7 @@ const UserDashboard = () => {
   return (
     <Box p={3}>
       <Typography variant="h4" gutterBottom>
-        Welcome to 99x, {user.name || 'User'}
+        User Hub — All in One Place. Ready to Explore? Welcome!, {user.name || 'User'}
       </Typography>
 
       <Grid container spacing={2} columns={12}>

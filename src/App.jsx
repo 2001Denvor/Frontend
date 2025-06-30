@@ -1,21 +1,20 @@
-// App.jsx
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Box } from '@mui/material';
 import './App.css';
+
 import AdminDashboard from './Pages/AdminDashboard';
+import UserDashboard from './Pages/UserDashboard';
 
-
-// Component imports
 import Login from './Components/Login';
 import SignUp from './Components/SignUp';
-import UserDashboard from './Pages/UserDashboard';
 import Sidebar from './Components/Sidebar';
 import Topbar from './Components/Topbar';
 import StatCard from './Components/StatCard';
 import ChartCard from './Components/ChartCard';
-import  ProtectedRoute from './Components/ProtectedRoute'; 
-// OR if ProtectedRoute uses `export default`, then: import ProtectedRoute from './Components/ProtectedRoute';
+
+import ProtectedRoute from './Components/ProtectedRoute';
+import DashboardRedirect from './Components/DashboardRedirect';
 
 function App() {
   return (
@@ -24,6 +23,10 @@ function App() {
       <Route path="/" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
 
+      {/* Redirect /dashboard based on user role */}
+      <Route path="/dashboard" element={<DashboardRedirect />} />
+
+      {/* Admin dashboard route */}
       <Route
         path="/admin/dashboard"
         element={
@@ -41,8 +44,7 @@ function App() {
         }
       />
 
-
-      {/* Protected Dashboard Route */}
+      {/* User dashboard route */}
       <Route
         path="/user/dashboard"
         element={

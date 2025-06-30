@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState } from "react";
+
+const api = "http://localhost:5238/api/Auth";
 
 const AuthContext = createContext();
 
@@ -6,24 +8,32 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   const login = async (email, password) => {
-    const res = await fetch("http://localhost:5238/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    });
-
-    console.log("Login status:", res.status);
-
     try {
-    const data = await res.json();
-    console.log("Login response data:", data); // 👈 Add this
-    setUser(data);
-    return data;
-  } catch (err) {
-    console.error("Error parsing JSON:", err); // 👈 Will show if 204
-    return null;
-  }
-};
+      const res = await fetch(`${api}/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      let data;
+      try {
+        data = await res.json();
+      } catch (jsonErr) {
+        console.error("JSON parse error:", jsonErr);
+        return { error: "Invalid response from server" };
+      }
+
+      if (!res.ok) {
+        return { error: data.error || "Login failed" };
+      }
+
+      setUser(data); // Save user data globally
+      return data;
+    } catch (err) {
+      console.error("Login error:", err);
+      return { error: "Network or server error" };
+    }
+  };
 
   const logout = () => {
     setUser(null);

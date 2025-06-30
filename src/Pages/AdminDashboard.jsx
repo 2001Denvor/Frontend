@@ -10,7 +10,7 @@ const AdminDashboard = () => {
   return (
     <Box p={3}>
       <Typography variant="h4" gutterBottom>
-        Admin Panel - Welcome, {user.name || 'Admin'}
+        Welcome to Your Smart Admin Space, {user.name || 'Admin'}
       </Typography>
 
       <Grid container spacing={2} columns={12}>

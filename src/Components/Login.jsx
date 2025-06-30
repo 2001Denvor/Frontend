@@ -1,8 +1,6 @@
-import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../Components/AuthContext";
- // adjust path as needed
 import {
   Box,
   Button,
@@ -14,51 +12,55 @@ import {
   Typography,
   Link,
   Stack,
-} from '@mui/material';
-import FacebookIcon from '@mui/icons-material/Facebook';
-import GoogleIcon from '@mui/icons-material/Google';
+} from "@mui/material";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import GoogleIcon from "@mui/icons-material/Google";
 
 export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
 
   const handleSignIn = async (e) => {
-  e.preventDefault();
-  try {
-    const email = e.target.email.value;
-    const password = e.target.password.value;
+    e.preventDefault();
+    try {
+      const email = e.target.email.value;
+      const password = e.target.password.value;
 
-    const user = await login(email, password);
-    if (!user) {
-      alert("Login failed");
-      return;
-    }
+      const user = await login(email, password);
 
-    if (user.role === 'admin') {
-      navigate('/admin/dashboard');
-    } else if(user.role == 'user') {
-      navigate('/user/dashboard');
-    }else{
-      alert("Invalid role");
+      if (user.error) {
+        alert(user.error);
+        return;
+      }
+
+      // Debug: check the user object returned
+      console.log("Logged in user:", user);
+
+      if (user.role === "admin") {
+        navigate("/admin/dashboard");
+      } else if (user.role === "user") {
+        navigate("/user/dashboard");
+      } else {
+        alert("Invalid role");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      alert("Something went wrong. Please try again.");
     }
-  } catch (err) {
-    console.error("Login error:", err);
-    alert("Something went wrong. Please try again.");
-  }
-};
+  };
 
   return (
     <Container maxWidth="xs">
       <Box
         sx={{
           marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
           boxShadow: 3,
           p: 4,
           borderRadius: 3,
-          backgroundColor: 'white',
+          backgroundColor: "white",
         }}
       >
         <Typography component="h1" variant="h5">
@@ -94,15 +96,18 @@ export default function Login() {
           />
 
           <Button
-            type="submit" // add this
+            type="submit"
             fullWidth
             variant="contained"
-            sx={{ mt: 2, mb: 2, background: 'linear-gradient(to right,rgb(8, 8, 8),rgb(1, 6, 16))', color: 'white' }}
+            sx={{
+              mt: 2,
+              mb: 2,
+              background: "linear-gradient(to right,rgb(8, 8, 8),rgb(1, 6, 16))",
+              color: "white",
+            }}
           >
             Sign In
           </Button>
-
-          
 
           <Link href="#" variant="body2" display="block" textAlign="center" sx={{ mb: 2 }}>
             Forgot your password?
@@ -121,17 +126,11 @@ export default function Login() {
           </Stack>
 
           <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-            Don't have an account?{' '}
-            <Link
-              component={RouterLink}
-              to="/signup"
-              onClick={e => e.stopPropagation()} // or e.preventDefault()
-            >
+            Don't have an account?{" "}
+            <Link component={RouterLink} to="/signup">
               Sign up
             </Link>
-
           </Typography>
-
         </Box>
       </Box>
     </Container>
