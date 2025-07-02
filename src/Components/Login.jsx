@@ -15,10 +15,11 @@ import {
 } from "@mui/material";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import GoogleIcon from "@mui/icons-material/Google";
+import axios from "axios";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { setUser } = useAuth();
 
   const handleSignIn = async (e) => {
     e.preventDefault();
@@ -26,16 +27,29 @@ export default function Login() {
       const email = e.target.email.value;
       const password = e.target.password.value;
 
-      const user = await login(email, password);
+      // ✅ Call backend login endpoint
+      const response = await axios.post("http://localhost:5238/api/Auth/login", {
+        email,
+        password,
+      });
 
-      if (user.error) {
-        alert(user.error);
+      const { token, user } = response.data;
+
+      if (!token) {
+        alert("Login failed: No token received");
         return;
       }
 
-      // Debug: check the user object returned
-      console.log("Logged in user:", user);
+      // ✅ Save token to localStorage
+      localStorage.setItem("token", token);
 
+      // ✅ Set default header for Axios
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      // ✅ Update global user context
+      setUser(user);
+
+      // ✅ Navigate based on role
       if (user.role === "admin") {
         navigate("/admin/dashboard");
       } else if (user.role === "user") {
@@ -45,7 +59,7 @@ export default function Login() {
       }
     } catch (err) {
       console.error("Login error:", err);
-      alert("Something went wrong. Please try again.");
+      alert("Invalid email or password. Please try again.");
     }
   };
 
@@ -102,14 +116,22 @@ export default function Login() {
             sx={{
               mt: 2,
               mb: 2,
-              background: "linear-gradient(to right,rgb(8, 8, 8),rgb(1, 6, 16))",
+              background: "linear-gradient(to right, rgb(8, 8, 8), rgb(1, 6, 16))",
               color: "white",
             }}
           >
             Sign In
           </Button>
 
-          <Link href="#" variant="body2" display="block" textAlign="center" sx={{ mb: 2 }}>
+          {/* ✅ Fixed "Forgot password?" link */}
+          <Link
+            component={RouterLink}
+            to="/forgot-password"
+            variant="body2"
+            display="block"
+            textAlign="center"
+            sx={{ mb: 2 }}
+          >
             Forgot your password?
           </Link>
 
@@ -126,7 +148,7 @@ export default function Login() {
           </Stack>
 
           <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-            Don't have an account?{" "}
+            Don’t have an account?{" "}
             <Link component={RouterLink} to="/signup">
               Sign up
             </Link>

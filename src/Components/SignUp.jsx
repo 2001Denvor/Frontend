@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // ✅ FIXED: import added
+import React, { useState } from "react";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
 import {
   Box,
   Button,
@@ -10,17 +10,18 @@ import {
   TextField,
   Typography,
   Link,
-  Stack
-} from '@mui/material';
-import FacebookIcon from '@mui/icons-material/Facebook';
-import GoogleIcon from '@mui/icons-material/Google';
-import { Link as RouterLink } from 'react-router-dom';
+  Stack,
+  MenuItem,
+} from "@mui/material";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import GoogleIcon from "@mui/icons-material/Google";
 import { useAuth } from "../Components/AuthContext";
+import axios from "axios";
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
-  const [role, setRole] = useState("user"); // ✅ New: role selection
+  const { setUser } = useAuth();
+  const [role, setRole] = useState("user");
 
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -29,49 +30,87 @@ const SignUp = () => {
     const fullName = e.target.fullName.value;
 
     try {
-      const response = await fetch("http://localhost:5238/api/Auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fullName, email, password, role }),
+      // ✅ Register
+      const res = await axios.post("http://localhost:5238/api/Auth/register", {
+        fullName,
+        email,
+        password,
+        role,
       });
 
-      if (response.ok) {
-        const loginRes = await fetch("http://localhost:5238/api/Auth/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
+      if (res.status === 200) {
+        // ✅ Auto-login
+        const loginRes = await axios.post("http://localhost:5238/api/Auth/login", {
+          email,
+          password,
         });
 
-        if (loginRes.ok) {
-          const userData = await loginRes.json();
-          login(userData);
-          navigate(userData.role === 'admin' ? '/admin/dashboard' : '/user/dashboard');
+        if (loginRes.status === 200) {
+          const data = loginRes.data;
+          localStorage.setItem("token", data.token);
+          localStorage.setItem("user", JSON.stringify(data.user));
+          axios.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
+          setUser(data.user);
+          navigate(data.user.role === "admin" ? "/admin/dashboard" : "/user/dashboard");
         } else {
-          alert("Registered, but login failed. Try manually.");
+          alert("Registered, but login failed. Please log in manually.");
         }
       } else {
-        const errorData = await response.json();
-        alert(errorData.error || "Sign up failed!");
+        alert("Sign up failed! Please try again.");
       }
     } catch (err) {
-      console.error("Error:", err);
-      alert("An error occurred.");
+      console.error("Sign up error:", err.response?.data || err.message);
+      let message = "Sign up failed!";
+      if (err.response && err.response.data) {
+        if (err.response.data.error) {
+          message = err.response.data.error;
+        }
+        if (err.response.data.details) {
+          const details = Array.isArray(err.response.data.details)
+            ? err.response.data.details.map((d) => d.description || d).join(", ")
+            : err.response.data.details;
+          message += ` Details: ${details}`;
+        }
+      }
+      alert(message);
     }
   };
 
   return (
     <Container maxWidth="xs">
-      <Box sx={{ mt: 8, p: 4, boxShadow: 3, borderRadius: 3, backgroundColor: '#fff' }}>
+      <Box sx={{ mt: 8, p: 4, boxShadow: 3, borderRadius: 3, backgroundColor: "#fff" }}>
         <Typography variant="h5" fontWeight="bold" gutterBottom>
           Sign up
         </Typography>
 
         <Box component="form" onSubmit={handleSignUp}>
-          <TextField fullWidth label="Full name" name="fullName" margin="normal" required />
-          <TextField fullWidth label="Email" name="email" type="email" margin="normal" required />
-          <TextField fullWidth label="Password" name="password" type="password" margin="normal" required />
+          <TextField
+            fullWidth
+            label="Full name"
+            name="fullName"
+            margin="normal"
+            required
+            autoComplete="name"
+          />
+          <TextField
+            fullWidth
+            label="Email"
+            name="email"
+            type="email"
+            margin="normal"
+            required
+            autoComplete="email"
+          />
+          <TextField
+            fullWidth
+            label="Password"
+            name="password"
+            type="password"
+            margin="normal"
+            required
+            autoComplete="new-password"
+          />
 
-          {/* ✅ Role select dropdown */}
           <TextField
             select
             label="Role"
@@ -79,16 +118,12 @@ const SignUp = () => {
             onChange={(e) => setRole(e.target.value)}
             fullWidth
             margin="normal"
-            SelectProps={{ native: true }}
           >
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
+            <MenuItem value="user">User</MenuItem>
+            <MenuItem value="admin">Admin</MenuItem>
           </TextField>
 
-          <FormControlLabel
-            control={<Checkbox />}
-            label="I want to receive updates via email."
-          />
+          <FormControlLabel control={<Checkbox />} label="I want to receive updates via email." />
 
           <Button type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 2 }}>
             Sign up
@@ -107,7 +142,7 @@ const SignUp = () => {
         </Stack>
 
         <Typography mt={3} textAlign="center">
-          Already have an account?{' '}
+          Already have an account?{" "}
           <Link component={RouterLink} to="/" underline="hover">
             Sign in
           </Link>

@@ -12,9 +12,12 @@ import Sidebar from './Components/Sidebar';
 import Topbar from './Components/Topbar';
 import StatCard from './Components/StatCard';
 import ChartCard from './Components/ChartCard';
-
 import ProtectedRoute from './Components/ProtectedRoute';
 import DashboardRedirect from './Components/DashboardRedirect';
+
+// ✅ Add these imports
+import ForgotPassword from './Components/ForgotPassword';
+import ResetPassword from './Components/ResetPassword';
 
 function App() {
   return (
@@ -22,6 +25,8 @@ function App() {
       {/* Public routes */}
       <Route path="/" element={<Login />} />
       <Route path="/signup" element={<SignUp />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       {/* Redirect /dashboard based on user role */}
       <Route path="/dashboard" element={<DashboardRedirect />} />
