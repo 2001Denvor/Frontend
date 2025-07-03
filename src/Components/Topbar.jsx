@@ -47,7 +47,7 @@ const Topbar = ({ toggleTheme, isDarkMode }) => {
   return (
     <AppBar position="fixed" color="default" elevation={1}>
       <Toolbar sx={{ justifyContent: 'flex-end' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: '#f1f1f1', px: 2, borderRadius: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: 'pearlwhite', px: 2, borderRadius: 2 }}>
           <SearchIcon />
           <InputBase placeholder="Search..." sx={{ ml: 1, flex: 1 }} />
         </Box>
