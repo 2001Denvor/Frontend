@@ -74,7 +74,7 @@ export default function Login() {
           boxShadow: 3,
           p: 4,
           borderRadius: 3,
-          backgroundColor: "white",
+          backgroundColor: "pearlwhite",
         }}
       >
         <Typography component="h1" variant="h5">
@@ -106,7 +106,7 @@ export default function Login() {
 
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
+            label="Remember me" 
           />
 
           <Button

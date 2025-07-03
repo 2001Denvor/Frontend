@@ -15,9 +15,6 @@ const UserDashboard = () => {
 
       <Grid container spacing={2} columns={12}>
         <Grid colSpan={{ xs: 12, md: 6 }}>
-          <StatCard title="Your Spend" value="$5,320" change="8.4" isPositive={false} />
-        </Grid>
-        <Grid colSpan={{ xs: 12, md: 6 }}>
           <StatCard title="New Users" value="2,134" change="8.1" isPositive={true} />
         </Grid>
         <Grid colSpan={{ xs: 12, md: 6 }}>

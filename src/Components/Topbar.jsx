@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useAuth } from './AuthContext'; // Adjust path if needed
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthContext'; // ✅ Make sure path is correct
 
 import {
   AppBar,
@@ -8,13 +9,10 @@ import {
   InputBase,
   Menu,
   MenuItem,
-  Typography,
   Box,
   Select,
   FormControl,
-  useTheme,
   Tooltip,
-  Switch
 } from '@mui/material';
 
 import SearchIcon from '@mui/icons-material/Search';
@@ -29,24 +27,32 @@ const Topbar = ({ toggleTheme, isDarkMode }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [language, setLanguage] = useState('EN');
 
-  const { user, login, logout } = useAuth();
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
-  const handleProfileMenuOpen = (event) => setAnchorEl(event.currentTarget);
-  const handleMenuClose = () => setAnchorEl(null);
+  const handleProfileMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    logout();
+    handleMenuClose();
+    navigate('/signin');
+  };
 
   return (
     <AppBar position="fixed" color="default" elevation={1}>
       <Toolbar sx={{ justifyContent: 'flex-end' }}>
-
-        {/* Search Bar */}
         <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: '#f1f1f1', px: 2, borderRadius: 2 }}>
           <SearchIcon />
           <InputBase placeholder="Search..." sx={{ ml: 1, flex: 1 }} />
         </Box>
 
-        {/* Right Icons */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-
           <Tooltip title="Upload">
             <IconButton>
               <CloudUploadIcon />
@@ -65,14 +71,12 @@ const Topbar = ({ toggleTheme, isDarkMode }) => {
             </IconButton>
           </Tooltip>
 
-          {/* Dark Mode Toggle */}
           <Tooltip title="Toggle Theme">
             <IconButton onClick={toggleTheme}>
               {isDarkMode ? <Brightness7Icon /> : <Brightness4Icon />}
             </IconButton>
           </Tooltip>
 
-          {/* Language Selector */}
           <FormControl size="small" variant="standard">
             <Select
               value={language}
@@ -86,18 +90,19 @@ const Topbar = ({ toggleTheme, isDarkMode }) => {
             </Select>
           </FormControl>
 
-          {/* Profile Menu */}
           <IconButton onClick={handleProfileMenuOpen}>
             <AccountCircle />
           </IconButton>
+
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={handleMenuClose}
           >
-            <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-            <MenuItem onClick={handleMenuClose}>My Account</MenuItem>
-            <MenuItem onClick={handleMenuClose}>Logout</MenuItem>
+            <MenuItem component={RouterLink} to="/profile" onClick={handleMenuClose}>
+              My Profile
+            </MenuItem>
+            <MenuItem onClick={handleLogout}>Logout</MenuItem>
           </Menu>
         </Box>
       </Toolbar>
@@ -106,4 +111,3 @@ const Topbar = ({ toggleTheme, isDarkMode }) => {
 };
 
 export default Topbar;
-
