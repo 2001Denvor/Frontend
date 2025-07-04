@@ -14,7 +14,9 @@ const AdminDashboard = () => {
       </Typography>
 
       <Grid container spacing={2} columns={12}>
-        
+        <Grid colSpan={{ xs: 12, md: 6 }}>
+          <StatCard title="Total Users" value="78,250" change="70.5" isPositive={true} />
+        </Grid>
         <Grid colSpan={{ xs: 12, md: 6 }}>
           <StatCard title="New Registrations" value="3,104" change="7.8" isPositive={true} />
         </Grid>
