@@ -74,7 +74,7 @@ export default function Login() {
           boxShadow: 3,
           p: 4,
           borderRadius: 3,
-          backgroundColor: "pearlwhite",
+          backgroundColor: "#A0A0A6",
         }}
       >
         <Typography component="h1" variant="h5">
