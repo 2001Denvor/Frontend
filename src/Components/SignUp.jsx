@@ -31,7 +31,7 @@ const SignUp = () => {
 
     try {
       // ✅ Register
-      const res = await axios.post("http://localhost:5238/api/Auth/register", {
+      const res = await axios.post("https://localhost:7163/api/Auth/register", {
         fullName,
         email,
         password,
@@ -40,7 +40,7 @@ const SignUp = () => {
 
       if (res.status === 200) {
         // ✅ Auto-login
-        const loginRes = await axios.post("http://localhost:5238/api/Auth/login", {
+        const loginRes = await axios.post("https://localhost:7163/api/Auth/login", {
           email,
           password,
         });

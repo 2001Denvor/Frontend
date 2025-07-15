@@ -28,7 +28,7 @@ export default function Login() {
       const password = e.target.password.value;
 
       // ✅ Call backend login endpoint
-      const response = await axios.post("http://localhost:5238/api/Auth/login", {
+      const response = await axios.post("https://localhost:7163/api/Auth/login", {
         email,
         password,
       });
