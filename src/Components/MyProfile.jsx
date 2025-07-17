@@ -14,8 +14,8 @@ const MyProfile = () => {
 
   return (
     <Box sx={{ mt: 10, display: 'flex', justifyContent: 'center', }}>
-      <Card sx={{ maxWidth: 400, width: '100%', p: 2,}}>
-        <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <Card sx={{ maxWidth: 400, width: '100%', p: 2, backgroundColor: '#63635dff', boxShadow: 3 }}>
+        <CardContent sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', }}>
           <Avatar sx={{ width: 80, height: 80, mb: 2 }}>
             {avatarLetter}
           </Avatar>
