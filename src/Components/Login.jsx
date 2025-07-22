@@ -1,159 +1,164 @@
-import React from "react";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { useAuth } from "../Components/AuthContext";
+
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
 import {
   Box,
   Button,
-  Checkbox,
-  Container,
-  Divider,
-  FormControlLabel,
   TextField,
   Typography,
-  Link,
+  Container,
   Stack,
+  Divider,
+  Link,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import FacebookIcon from "@mui/icons-material/Facebook";
-import GoogleIcon from "@mui/icons-material/Google";
-import axios from "axios";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useAuth } from "../Components/AuthContext";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const { login, user: jwtUser } = useAuth();
+  const {
+    loginWithRedirect,
+    isAuthenticated,
+    user: auth0User,
+    isLoading,
+  } = useAuth0();
 
+  const [rememberMe, setRememberMe] = useState(false);
+
+  // ✅ Redirect after Auth0 login (by email or role)
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && auth0User) {
+      const email = auth0User.email;
+      const isAdmin = email === "admin@example.com"; // Replace with your logic
+      navigate(isAdmin ? "/admin/dashboard" : "/user/dashboard");
+    }
+  }, [isAuthenticated, auth0User, isLoading, navigate]);
+
+  // ✅ Handle JWT login
   const handleSignIn = async (e) => {
     e.preventDefault();
-    try {
-      const email = e.target.email.value;
-      const password = e.target.password.value;
+    const email = e.target.email.value;
+    const password = e.target.password.value;
 
-      // ✅ Call backend login endpoint
-      const response = await axios.post("https://localhost:7163/api/Auth/login", {
-        email,
-        password,
-      });
+    const res = await login(email, password);
 
-      const { token, user } = response.data;
-
-      if (!token) {
-        alert("Login failed: No token received");
-        return;
-      }
-
-      // ✅ Save token to localStorage
-      localStorage.setItem("token", token);
-
-      // ✅ Set default header for Axios
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
-      // ✅ Update global user context
-      setUser(user);
-
-      // ✅ Navigate based on role
-      if (user.role === "admin") {
-        navigate("/admin/dashboard");
-      } else if (user.role === "user") {
-        navigate("/user/dashboard");
-      } else {
-        alert("Invalid role");
-      }
-    } catch (err) {
-      console.error("Login error:", err);
-      alert("Invalid email or password. Please try again.");
+    if (res.success) {
+      const role = res.user.role;
+      navigate(role === "admin" ? "/admin/dashboard" : "/user/dashboard");
+    } else {
+      alert(res.error);
     }
+  };
+
+  // ✅ Google Login (Auth0)
+  const handleGoogleLogin = () => {
+    loginWithRedirect({ connection: "google-oauth2" });
+  };
+
+  // ✅ Facebook Login (Auth0)
+  const handleFacebookLogin = () => {
+    loginWithRedirect({ connection: "facebook" });
   };
 
   return (
     <Container maxWidth="xs">
       <Box
         sx={{
-          marginTop: 8,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          boxShadow: 3,
+          mt: 8,
           p: 4,
-          borderRadius: 3,
-          backgroundColor: "#696a6861",
+          boxShadow: 3,
+          borderRadius: 2,
+          backgroundColor: "#574f4fff",
         }}
       >
-        <Typography component="h1" variant="h5">
-          Sign in
+        <Typography variant="h5" textAlign="center" mb={2}>
+          Sign In
         </Typography>
 
-        <Box component="form" noValidate sx={{ mt: 2 }} onSubmit={handleSignIn}>
+        <Box component="form" onSubmit={handleSignIn}>
           <TextField
-            margin="normal"
-            required
             fullWidth
-            id="email"
             label="Email"
             name="email"
-            autoComplete="email"
-            autoFocus
-          />
-
-          <TextField
+            type="email"
             margin="normal"
             required
+          />
+          <TextField
             fullWidth
-            name="password"
             label="Password"
+            name="password"
             type="password"
-            id="password"
-            autoComplete="current-password"
+            margin="normal"
+            required
           />
 
           <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me" 
+            control={
+              <Checkbox
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                color="primary"
+              />
+            }
+            label="Remember me"
+            sx={{ mt: 1 }}
           />
 
+          <Box textAlign="center" mt={1} mb={1}>
+            <Link
+              component={RouterLink}
+              to="/forgot-password"
+              underline="hover"
+              fontSize="0.9rem"
+            >
+              Forgot password?
+            </Link>
+          </Box>
+
+          <Button type="submit" fullWidth variant="contained" sx={{ mt: 1 }}>
+            Login
+          </Button>
+        </Box>
+
+        <Divider sx={{ my: 3 }}>OR</Divider>
+
+        <Stack spacing={2}>
           <Button
-            type="submit"
             fullWidth
-            variant="contained"
-            sx={{
-              mt: 2,
-              mb: 2,
-              background: "linear-gradient(to right, rgb(8, 8, 8), rgb(1, 6, 16))",
-              color: "white",
-            }}
+            variant="outlined"
+            startIcon={
+              <img
+                src="/Googles.png"
+                alt="Google"
+                style={{ width: 30, height: 20 }}
+              />
+            }
+            onClick={handleGoogleLogin}
           >
-            Sign In
+            Sign in with Google
           </Button>
 
-          {/* ✅ Fixed "Forgot password?" link */}
-          <Link
-            component={RouterLink}
-            to="/forgot-password"
-            variant="body2"
-            display="block"
-            textAlign="center"
-            sx={{ mb: 2 }}
+          <Button
+            fullWidth
+            variant="outlined"
+            startIcon={<FacebookIcon sx={{ color: "#1877F2" }} />}
+            onClick={handleFacebookLogin}
           >
-            Forgot your password?
+            Sign in with Facebook
+          </Button>
+        </Stack>
+
+        <Typography textAlign="center" mt={3} fontSize="0.95rem">
+          Don't have an account?{" "}
+          <Link component={RouterLink} to="/signup" underline="hover">
+            Sign Up
           </Link>
-
-          <Divider>or</Divider>
-
-          <Stack spacing={2} mt={2}>
-            <Button fullWidth variant="outlined" startIcon={<GoogleIcon />}>
-              Sign in with Google
-            </Button>
-
-            <Button fullWidth variant="outlined" startIcon={<FacebookIcon />}>
-              Sign in with Facebook
-            </Button>
-          </Stack>
-
-          <Typography variant="body2" align="center" sx={{ mt: 2 }}>
-            Don’t have an account?{" "}
-            <Link component={RouterLink} to="/signup">
-              Sign up
-            </Link>
-          </Typography>
-        </Box>
+        </Typography>
       </Box>
     </Container>
   );

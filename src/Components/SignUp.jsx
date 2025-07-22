@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
 import {
   Box,
@@ -16,11 +16,13 @@ import {
 import FacebookIcon from "@mui/icons-material/Facebook";
 import GoogleIcon from "@mui/icons-material/Google";
 import { useAuth } from "../Components/AuthContext";
+import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 
 const SignUp = () => {
   const navigate = useNavigate();
   const { setUser } = useAuth();
+  const { loginWithRedirect, isAuthenticated, user: auth0User, getAccessTokenSilently } = useAuth0();
   const [role, setRole] = useState("user");
 
   const handleSignUp = async (e) => {
@@ -30,7 +32,6 @@ const SignUp = () => {
     const fullName = e.target.fullName.value;
 
     try {
-      // ✅ Register
       const res = await axios.post("https://localhost:7163/api/Auth/register", {
         fullName,
         email,
@@ -39,7 +40,6 @@ const SignUp = () => {
       });
 
       if (res.status === 200) {
-        // ✅ Auto-login
         const loginRes = await axios.post("https://localhost:7163/api/Auth/login", {
           email,
           password,
@@ -76,31 +76,55 @@ const SignUp = () => {
     }
   };
 
+  const handleSocialSignUp = async (connection) => {
+    await loginWithRedirect({
+      connection, // "google-oauth2" or "facebook"
+      appState: {
+        targetUrl: "/", // post-login landing path
+      },
+    });
+  };
+
+  useEffect(() => {
+    const checkAndRegister = async () => {
+      if (isAuthenticated && auth0User) {
+        try {
+          const token = await getAccessTokenSilently();
+          const res = await axios.post("https://localhost:7163/api/Auth/social-login", {
+            email: auth0User.email,
+            fullName: auth0User.name || auth0User.nickname,
+            provider: auth0User.sub.split("|")[0], // google-oauth2 or facebook
+          });
+
+          const userData = res.data.user;
+          const jwt = res.data.token;
+
+          localStorage.setItem("token", jwt);
+          localStorage.setItem("user", JSON.stringify(userData));
+          axios.defaults.headers.common["Authorization"] = `Bearer ${jwt}`;
+          setUser(userData);
+
+          navigate(userData.role === "admin" ? "/admin/dashboard" : "/user/dashboard");
+        } catch (error) {
+          console.error("Social login error:", error);
+          alert("Failed to complete social login.");
+        }
+      }
+    };
+
+    checkAndRegister();
+  }, [isAuthenticated, auth0User]);
+
   return (
     <Container maxWidth="xs">
-      <Box sx={{ mt: 8, p: 4, boxShadow: 3, borderRadius: 3, backgroundColor: "#696a6861" }}>
-        <Typography variant="h5" fontWeight="bold" gutterBottom>
+      <Box sx={{ mt: 8, p: 4, boxShadow: 3, borderRadius: 3, backgroundColor: "#574f4fff" }}>
+        <Typography variant="h5" fontWeight="bold" gutterBottom align="center">
           Sign up
         </Typography>
 
-        <Box component="form" onSubmit={handleSignUp}>
-          <TextField
-            fullWidth
-            label="Full name"
-            name="fullName"
-            margin="normal"
-            required
-            autoComplete="name"
-          />
-          <TextField
-            fullWidth
-            label="Email"
-            name="email"
-            type="email"
-            margin="normal"
-            required
-            autoComplete="email"
-          />
+        <Box component="form" onSubmit={handleSignUp} noValidate>
+          <TextField fullWidth label="Full name" name="fullName" margin="normal" required />
+          <TextField fullWidth label="Email" name="email" type="email" margin="normal" required />
           <TextField
             fullWidth
             label="Password"
@@ -108,7 +132,6 @@ const SignUp = () => {
             type="password"
             margin="normal"
             required
-            autoComplete="new-password"
           />
 
           <TextField
@@ -123,7 +146,10 @@ const SignUp = () => {
             <MenuItem value="admin">Admin</MenuItem>
           </TextField>
 
-          <FormControlLabel control={<Checkbox />} label="I want to receive updates via email." />
+          <FormControlLabel
+            control={<Checkbox name="updates" autoComplete="off" />}
+            label="I want to receive updates via email."
+          />
 
           <Button type="submit" fullWidth variant="contained" sx={{ mt: 2, mb: 2 }}>
             Sign up
@@ -133,10 +159,26 @@ const SignUp = () => {
         <Divider>or</Divider>
 
         <Stack spacing={2} mt={2}>
-          <Button fullWidth variant="outlined" startIcon={<GoogleIcon />}>
+          <Button
+            fullWidth
+            variant="outlined"
+            startIcon={
+              <img
+                src="/Googles.png"
+                alt="Google"
+                style={{ width: 30, height: 20, }}
+              />
+            }
+            onClick={() => handleSocialSignUp("google-oauth2")}
+          >
             Sign up with Google
           </Button>
-          <Button fullWidth variant="outlined" startIcon={<FacebookIcon />}>
+          <Button
+            fullWidth
+            variant="outlined"
+            startIcon={<FacebookIcon />}
+            onClick={() => handleSocialSignUp("facebook")}
+          >
             Sign up with Facebook
           </Button>
         </Stack>

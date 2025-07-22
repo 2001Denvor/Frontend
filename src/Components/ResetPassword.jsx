@@ -51,25 +51,33 @@ export default function ResetPassword() {
       {error && <Typography color="error" mb={1}>{error}</Typography>}
       {message && <Typography color="primary" mb={1}>{message}</Typography>}
       {!message && (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <TextField
             label="Email"
+            name="email"
             type="email"
-            fullWidth
-            margin="normal"
             value={email}
             disabled
+            fullWidth
+            margin="normal"
+            autoComplete="email"
+            inputProps={{ autoComplete: "email" }}
           />
           <TextField
             label="New Password"
+            name="newPassword"
             type="password"
             required
+            value={newPassword}
             fullWidth
             margin="normal"
-            value={newPassword}
+            autoComplete="new-password"
+            inputProps={{ autoComplete: "new-password" }}
             onChange={(e) => setNewPassword(e.target.value)}
           />
-          <Button type="submit" variant="contained" fullWidth>Reset Password</Button>
+          <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
+            Reset Password
+          </Button>
         </form>
       )}
     </Box>
