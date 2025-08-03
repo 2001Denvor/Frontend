@@ -117,7 +117,7 @@ const SignUp = () => {
 
   return (
     <Container maxWidth="xs">
-      <Box sx={{ mt: 8, p: 4, boxShadow: 3, borderRadius: 3, backgroundColor: "#574f4fff" }}>
+      <Box sx={{ mt: 8, p: 4, boxShadow: 3, borderRadius: 3, backgroundColor: "#895a5aff" }}>
         <Typography variant="h5" fontWeight="bold" gutterBottom align="center">
           Sign up
         </Typography>

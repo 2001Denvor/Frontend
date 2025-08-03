@@ -72,7 +72,7 @@ export default function Login() {
           p: 4,
           boxShadow: 3,
           borderRadius: 2,
-          backgroundColor: "#574f4fff",
+          backgroundColor: "#895a5aff",
         }}
       >
         <Typography variant="h5" textAlign="center" mb={2}>
