@@ -10,8 +10,10 @@ import {
 } from '@mui/material';
 
 const MyProfile = () => {
-  // Grab user info and loading state from your Auth context
   const { user, loading } = useAuth();
+
+  // Utility function to check if an object is empty
+  const isEmptyObject = (obj) => !obj || Object.keys(obj).length === 0;
 
   // Show spinner while loading user data
   if (loading) {
@@ -22,8 +24,8 @@ const MyProfile = () => {
     );
   }
 
-  // If user is not available (not logged in), show message
-  if (!user) {
+  // If user is not available or is empty, show message
+  if (!user || isEmptyObject(user)) {
     return (
       <Box sx={{ mt: 10, display: 'flex', justifyContent: 'center' }}>
         <Typography variant="h6" color="text.secondary">
@@ -33,10 +35,15 @@ const MyProfile = () => {
     );
   }
 
-  // Pick display name from available user properties
-  // Make sure your backend returns "fullname" or "name" or "email"
+  // Debug: log user object
+  console.log("User object:", user);
+
+  // Get display name safely
   const displayName =
-    user.fullname?.trim() || user.name?.trim() || user.email?.trim() || 'Unknown';
+    (typeof user.fullname === 'string' && user.fullname.trim()) ||
+    (typeof user.name === 'string' && user.name.trim()) ||
+    (typeof user.email === 'string' && user.email.trim()) ||
+    'Unknown';
 
   const avatarLetter = displayName.charAt(0).toUpperCase();
   const userRole = user.role || 'N/A';
@@ -59,7 +66,7 @@ const MyProfile = () => {
           <Avatar sx={{ width: 80, height: 80, mb: 2, bgcolor: 'yellow', color: 'black' }}>
             {avatarLetter}
           </Avatar>
-          <Typography variant="h5" color="white" gutterBottom align='center'>
+          <Typography variant="h5" color="white" gutterBottom align="center">
             {displayName}
           </Typography>
           <Typography variant="body1" color="orange">
